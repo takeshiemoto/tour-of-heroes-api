@@ -1,6 +1,6 @@
 # tour-of-heroes-api
 
-## Database
+## Setup Database
 
 ```
 docker-compose up
@@ -30,3 +30,8 @@ create table heroes (
 )
 ```
 
+## Run Server
+
+```
+go run *.go
+```
