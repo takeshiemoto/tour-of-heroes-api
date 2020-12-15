@@ -14,5 +14,4 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-# Service Account
-path/to/serviceAccount.json
+pgsql-data
