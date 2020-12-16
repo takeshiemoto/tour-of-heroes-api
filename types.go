@@ -1,6 +1,8 @@
 package main
 
-import "time"
+import (
+	"time"
+)
 
 type Hero struct {
 	ID        int       `json:"id"`
