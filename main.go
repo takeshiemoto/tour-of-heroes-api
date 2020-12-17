@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var Db *sql.DB
@@ -20,21 +22,27 @@ func init() {
 }
 
 func main() {
-	server := http.Server{
-		Addr: "127.0.0.1:8080",
-	}
+	mux := httprouter.New()
 
-	http.HandleFunc("/", rootHandler)
-	http.HandleFunc("/heroes", heroesHandler)
+	const prefix = "/api/v1/"
+
+	mux.GET(prefix, rootHandler)
+	mux.GET(prefix+"heroes", heroesHandler)
+	mux.GET(prefix+"heroes/:id", heroHandler)
+
+	server := http.Server{
+		Addr:    "127.0.0.1:8080",
+		Handler: mux,
+	}
 
 	server.ListenAndServe()
 }
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
+func rootHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	fmt.Println("Tour Of Heroes API")
 }
 
-func heroesHandler(w http.ResponseWriter, r *http.Request) {
+func heroesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	heroes, err := GetHeroes()
 	bytes, err := json.Marshal(heroes)
 	if err != nil {
@@ -42,6 +50,18 @@ func heroesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(bytes)
+}
+
+func heroHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id, err := strconv.Atoi(p.ByName("id"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	hero, err := GetHeroById(id)
+
+	output, err := json.MarshalIndent(&hero, "", "\t\t")
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(output)
 }
 
 func GetHeroes() (heroes Heroes, err error) {
@@ -59,5 +79,11 @@ func GetHeroes() (heroes Heroes, err error) {
 		heroes = append(heroes, hero)
 	}
 	rows.Close()
+	return
+}
+
+func GetHeroById(id int) (hero Hero, err error) {
+	hero = Hero{}
+	err = Db.QueryRow("SELECT * FROM heroes WHERE id = $1", id).Scan(&hero.ID, &hero.Name, &hero.CreatedAt, &hero.UpdateAt)
 	return
 }
