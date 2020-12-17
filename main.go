@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/julienschmidt/httprouter"
-	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/julienschmidt/httprouter"
+	_ "github.com/lib/pq"
 )
 
 var Db *sql.DB
