@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -46,7 +45,17 @@ func main() {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	fmt.Println("Tour Of Heroes API")
+	var m = struct {
+		Message string `json:"message"`
+	}{
+		Message: "Hello world",
+	}
+	bytes, err := json.Marshal(m)
+	if err != nil {
+		log.Fatal(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(bytes)
 }
 
 func heroesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
