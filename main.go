@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/julienschmidt/httprouter"
@@ -31,8 +32,13 @@ func main() {
 	mux.GET(prefix+"heroes", heroesHandler)
 	mux.GET(prefix+"heroes/:id", heroHandler)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
+
 	server := http.Server{
-		Addr:    "127.0.0.1:8080",
+		Addr:    ":" + port,
 		Handler: mux,
 	}
 
