@@ -27,7 +27,7 @@ func main() {
 
 	const prefix = "/api/v1/"
 
-	mux.GET(prefix, rootHandler)
+	mux.GET("/", rootHandler)
 	mux.GET(prefix+"heroes", heroesHandler)
 	mux.GET(prefix+"heroes/:id", heroHandler)
 
@@ -48,13 +48,12 @@ func rootHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	var m = struct {
 		Message string `json:"message"`
 	}{
-		Message: "Hello world",
+		Message: "ALIVE",
 	}
 	bytes, err := json.Marshal(m)
 	if err != nil {
 		log.Fatal(err)
 	}
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(bytes)
 }
 
