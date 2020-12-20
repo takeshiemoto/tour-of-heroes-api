@@ -1,0 +1,1 @@
+web: bin/tour-of-heroes-api
