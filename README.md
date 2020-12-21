@@ -22,6 +22,16 @@ go build -o bin/tour-of-heroes-api -v .
 heroku local web
 ```
 
+## Local Development
+
+```
+docker-compose up
+```
+
+```
+heroku local
+```
+
 ## Local Database
 
 ```
@@ -51,10 +61,3 @@ create table heroes (
     updateAt timestamp not null default current_timestamp
 )
 ```
-
-## Run Server
-
-```
-heroku local
-```
-

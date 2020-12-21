@@ -17,3 +17,5 @@
 pgsql-data
 
 tour-of-heroes-api
+
+.env
