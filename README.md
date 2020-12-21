@@ -1,6 +1,28 @@
 # tour-of-heroes-api
 
-## Setup Database
+## Heroku
+
+Deploy the app
+
+```
+git push heroku main
+```
+
+```
+heroku open
+```
+
+Run the app locally
+
+```
+go build -o bin/tour-of-heroes-api -v .
+```
+
+```
+heroku local web
+```
+
+## Local Database
 
 ```
 docker-compose up
@@ -33,5 +55,6 @@ create table heroes (
 ## Run Server
 
 ```
-go run *.go
+heroku local
 ```
+
