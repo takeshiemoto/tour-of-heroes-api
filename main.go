@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -73,6 +74,11 @@ func heroHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		log.Fatal(err)
 	}
 	hero, err := GetHeroById(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "Not Found")
+		return
+	}
 
 	output, err := json.MarshalIndent(&hero, "", "\t\t")
 	w.Header().Set("Content-Type", "application/json")
