@@ -1,57 +1,50 @@
 # tour-of-heroes-api
 
-## Heroku
+## 事前準備
 
-Deploy the app
+- [Go](https://golang.org/doc/install)
+- [Docker](https://www.docker.com/)
+- [Herokuアカウント](https://signup.heroku.com/)
+- [Heroku CLI](https://devcenter.heroku.com/ja/articles/heroku-cli)
 
-```
-git push heroku main
-```
+## Heroku CLI
 
-```
-heroku open
-```
-
-Run the app locally
+ログイン
 
 ```
-go build -o bin/tour-of-heroes-api -v .
+heroku login
 ```
 
-```
-heroku local web
-```
+[Herokuへのログイン](https://devcenter.heroku.com/ja/articles/heroku-cli#getting-started)
 
-## Local Development
+## Herokuのセットアップ
 
-```
-docker-compose up
-```
+Git Clone
 
 ```
-heroku local
+git clone git@github.com:takeshiemoto/tour-of-heroes-api.git
+cd tour-of-heroes-api
 ```
 
-## Local Database
+Herokuにアプリケーションを作成する
 
 ```
-docker-compose up
-docker exec -i -t tour-of-heroes-api_postgres_1 bash
+heroku create
 ```
 
-```
-su - postgres
-psql
-```
+Herokuにデータベースを作成
 
 ```
-CREATE ROLE toh LOGIN CREATEDB PASSWORD 'toh';
-CREATE DATABASE toh OWNER toh;
+heroku addons:create heroku-postgresql:hobby-dev
 ```
 
+データベースへの接続情報を確認
+
 ```
-psql --username=toh --password --dbname=toh
+heroku config
 ```
+
+接続情報参考にデータベースにログイン後テーブルを作成する
 
 ```postgresql
 create table heroes (
@@ -60,4 +53,79 @@ create table heroes (
     createdAt timestamp not null default current_timestamp,
     updateAt timestamp not null default current_timestamp
 )
+```
+
+アプリケーションをデプロイ
+
+```
+git push heroku main
+```
+
+アプリケーションを開く
+```
+heroku open
+```
+
+ログの表示
+
+```
+heroku logs --tail 
+```
+
+## ローカル開発環境のセットアップ
+
+Postgres用のDockerを立ち上げる
+```
+docker-compose up
+```
+
+Docker環境にログイン
+
+```
+docker exec -i -t tour-of-heroes-api_postgres_1 bash
+```
+
+postgresにログイン
+
+```
+su - postgres
+psql
+```
+
+ロールとユーザーを作成
+
+```
+CREATE ROLE toh LOGIN CREATEDB PASSWORD 'toh';
+CREATE DATABASE toh OWNER toh;
+```
+
+作成したユーザーでログイン
+
+```
+psql --username=toh --password --dbname=toh
+```
+
+テーブルを作成
+
+```postgresql
+create table heroes (
+    id serial primary key ,
+    name varchar(255),
+    createdAt timestamp not null default current_timestamp,
+    updateAt timestamp not null default current_timestamp
+)
+```
+
+## ローカル環境でAPIを起動
+
+アプリケーションをビルド
+
+```
+go build -o bin/tour-of-heroes-api -v .
+```
+
+ローカル開発環境を起動
+
+```
+heroku local web
 ```
