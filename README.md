@@ -118,6 +118,13 @@ create table heroes (
 
 ## ローカル環境でAPIを起動
 
+アプリケーションのルートに`.env`を作成
+
+.env
+```
+DATABASE_URL="user=toh dbname=toh password=toh sslmode=disable"
+```
+
 アプリケーションをビルド
 
 ```
