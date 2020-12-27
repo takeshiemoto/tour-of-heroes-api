@@ -49,7 +49,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	var m = struct {
 		Message string `json:"message"`
 	}{
-		Message: "ALIVE",
+		Message: "Tour Of Heroes API",
 	}
 	bytes, err := json.Marshal(m)
 	if err != nil {
