@@ -55,6 +55,9 @@ func rootHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	w.Write(bytes)
 }
 
@@ -65,6 +68,8 @@ func heroesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
 		log.Fatal(err)
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	w.Write(bytes)
 }
 
@@ -81,7 +86,10 @@ func heroHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	output, err := json.MarshalIndent(&hero, "", "\t\t")
+
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	w.Write(output)
 }
 
