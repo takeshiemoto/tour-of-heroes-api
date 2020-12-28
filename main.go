@@ -2,12 +2,9 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
@@ -26,11 +23,14 @@ func init() {
 func main() {
 	mux := httprouter.New()
 
-	const prefix = "/api/v1/"
+	// index
+	mux.GET("/", index)
 
-	mux.GET("/", rootHandler)
-	mux.GET(prefix+"heroes", heroesHandler)
-	mux.GET(prefix+"heroes/:id", heroHandler)
+	// Heroes
+	mux.GET(prefix(HeroesRoute), HeroListHandler)
+	mux.GET(prefix(HeroRoute), HeroRetrieveHandler)
+
+	mux.POST(prefix(HeroesRoute), HeroCreateHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -43,76 +43,4 @@ func main() {
 	}
 
 	server.ListenAndServe()
-}
-
-func rootHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	var m = struct {
-		Message string `json:"message"`
-	}{
-		Message: "Tour Of Heroes API",
-	}
-	bytes, err := json.Marshal(m)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	w.Write(bytes)
-}
-
-func heroesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	heroes, err := GetHeroes()
-	bytes, err := json.Marshal(heroes)
-	if err != nil {
-		log.Fatal(err)
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	w.Write(bytes)
-}
-
-func heroHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	id, err := strconv.Atoi(p.ByName("id"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	hero, err := GetHeroById(id)
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, "Not Found")
-		return
-	}
-
-	output, err := json.MarshalIndent(&hero, "", "\t\t")
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	w.Write(output)
-}
-
-func GetHeroes() (heroes Heroes, err error) {
-	rows, err := Db.Query("select * from heroes")
-	if err != nil {
-		return nil, err
-	}
-
-	for rows.Next() {
-		hero := Hero{}
-		err = rows.Scan(&hero.ID, &hero.Name, &hero.CreatedAt, &hero.UpdateAt)
-		if err != nil {
-			return nil, err
-		}
-		heroes = append(heroes, hero)
-	}
-	rows.Close()
-	return
-}
-
-func GetHeroById(id int) (hero Hero, err error) {
-	hero = Hero{}
-	err = Db.QueryRow("SELECT * FROM heroes WHERE id = $1", id).Scan(&hero.ID, &hero.Name, &hero.CreatedAt, &hero.UpdateAt)
-	return
 }
