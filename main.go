@@ -21,16 +21,30 @@ func init() {
 }
 
 func main() {
-	mux := httprouter.New()
+	router := httprouter.New()
+
+	router.GlobalOPTIONS = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Access-Control-Request-Method") != "" {
+			// Set CORS headers
+			header := w.Header()
+			header.Set("Access-Control-Allow-Origin", "*")
+			header.Set("Access-Control-Allow-Headers", "Content-Type")
+			header.Set("Access-Control-Allow-Methods", header.Get("Allow"))
+		}
+
+		// Adjust status code to 204
+		w.WriteHeader(http.StatusNoContent)
+	})
 
 	// index
-	mux.GET("/", index)
+	router.GET("/", index)
+	router.POST("/", index2)
 
 	// Heroes
-	mux.GET(prefix(HeroesRoute), HeroListHandler)
-	mux.GET(prefix(HeroRoute), HeroRetrieveHandler)
+	router.GET(prefix(HeroesRoute), HeroListHandler)
+	router.GET(prefix(HeroRoute), HeroRetrieveHandler)
 
-	mux.POST(prefix(HeroesRoute), HeroCreateHandler)
+	router.POST(prefix(HeroesRoute), HeroCreateHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -39,7 +53,7 @@ func main() {
 
 	server := http.Server{
 		Addr:    ":" + port,
-		Handler: mux,
+		Handler: router,
 	}
 
 	server.ListenAndServe()

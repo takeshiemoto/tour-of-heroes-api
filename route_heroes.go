@@ -30,8 +30,8 @@ func HeroListHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)
@@ -86,7 +86,6 @@ func HeroCreateHandler(w http.ResponseWriter, r *http.Request, p httprouter.Para
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	w.WriteHeader(http.StatusOK)
