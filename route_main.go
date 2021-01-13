@@ -21,13 +21,3 @@ func index(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 	w.Write(res)
 }
-
-func index2(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	ping := Ping{http.StatusOK, "ok"}
-	res, _ := json.Marshal(ping)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-	w.Write(res)
-}

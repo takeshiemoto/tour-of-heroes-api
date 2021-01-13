@@ -38,7 +38,6 @@ func main() {
 
 	// index
 	router.GET("/", index)
-	router.POST("/", index2)
 
 	// Heroes
 	router.GET(prefix(HeroesRoute), HeroListHandler)
